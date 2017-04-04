@@ -3,7 +3,6 @@ const path = require('path');
 const jestSnapshot = require('jest-snapshot');
 const test = require('tap').test;
 const assert = require('../lib/assert');
-const formatValue = require('../lib/format-assert-error').formatValue;
 
 let lastFailure = null;
 let lastPassed = false;
@@ -215,7 +214,7 @@ test('.is()', t => {
 		assertion: 'is',
 		message: '',
 		values: [
-			{label: 'Difference:', formatted: /foobar/}
+			{label: 'Difference:', formatted: /- 'foo'\n\+ 'bar'/}
 		]
 	});
 
@@ -225,8 +224,7 @@ test('.is()', t => {
 		assertion: 'is',
 		message: '',
 		values: [
-			{label: 'Actual:', formatted: /foo/},
-			{label: 'Must be the same as:', formatted: /42/}
+			{label: 'Difference:', formatted: /- 'foo'\n\+ 42/}
 		]
 	});
 
@@ -236,8 +234,7 @@ test('.is()', t => {
 		assertion: 'is',
 		message: 'my message',
 		values: [
-			{label: 'Actual:', formatted: /foo/},
-			{label: 'Must be the same as:', formatted: /42/}
+			{label: 'Difference:', formatted: /- 'foo'\n\+ 42/}
 		]
 	});
 
@@ -247,8 +244,7 @@ test('.is()', t => {
 		assertion: 'is',
 		message: 'my message',
 		values: [
-			{label: 'Actual:', formatted: /0/},
-			{label: 'Must be the same as:', formatted: /-0/}
+			{label: 'Difference:', formatted: /- 0\n\+ -0/}
 		]
 	});
 
@@ -258,8 +254,7 @@ test('.is()', t => {
 		assertion: 'is',
 		message: 'my message',
 		values: [
-			{label: 'Actual:', formatted: /-0/},
-			{label: 'Must be the same as:', formatted: /0/}
+			{label: 'Difference:', formatted: /- -0\n\+ 0/}
 		]
 	});
 
@@ -523,7 +518,7 @@ test('.deepEqual()', t => {
 	}, {
 		assertion: 'deepEqual',
 		message: '',
-		values: [{label: 'Difference:', formatted: /foobar/}]
+		values: [{label: 'Difference:', formatted: /- 'foo'\n\+ 'bar'/}]
 	});
 
 	failsWith(t, () => {
@@ -531,10 +526,7 @@ test('.deepEqual()', t => {
 	}, {
 		assertion: 'deepEqual',
 		message: '',
-		values: [
-			{label: 'Actual:', formatted: /foo/},
-			{label: 'Must be deeply equal to:', formatted: /42/}
-		]
+		values: [{label: 'Difference:', formatted: /- 'foo'\n\+ 42/}]
 	});
 
 	failsWith(t, () => {
@@ -542,10 +534,7 @@ test('.deepEqual()', t => {
 	}, {
 		assertion: 'deepEqual',
 		message: 'my message',
-		values: [
-			{label: 'Actual:', formatted: /foo/},
-			{label: 'Must be deeply equal to:', formatted: /42/}
-		]
+		values: [{label: 'Difference:', formatted: /- 'foo'\n\+ 42/}]
 	});
 
 	t.end();
@@ -565,7 +554,7 @@ test('.notDeepEqual()', t => {
 	}, {
 		assertion: 'notDeepEqual',
 		message: '',
-		values: [{label: 'Value is deeply equal:', formatted: formatValue({a: 'a'})}]
+		values: [{label: 'Value is deeply equal:', formatted: /.*Object.*\n.*a: 'a'/}]
 	});
 
 	failsWith(t, () => {
@@ -573,7 +562,7 @@ test('.notDeepEqual()', t => {
 	}, {
 		assertion: 'notDeepEqual',
 		message: 'my message',
-		values: [{label: 'Value is deeply equal:', formatted: formatValue(['a', 'b'])}]
+		values: [{label: 'Value is deeply equal:', formatted: /.*Array.*\n.*'a',\n.*'b',/}]
 	});
 
 	t.end();
